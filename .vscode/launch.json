@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Attach (prompt VM Service)",
+            "type": "dart",
+            "request": "attach",
+            "vmServiceUri": "${command:dart.promptForVmService}"
+        },
+        {
+            "name": "flutter-elinux: Attach",
+            "request": "attach",
+            "type": "dart",
+            "deviceId": "flutter-tester",
+            "cwd": "${workspaceFolder}",
+            "vmServiceUri": "http://127.0.0.1:37063/vLUmRPNuu18=/"
+        }
+    ]
+}
