@@ -10,11 +10,22 @@ class PositionControl extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 8),
+      padding: const EdgeInsets.fromLTRB(8, 32, 8, 16),
       child: BlocBuilder<TriangleRotationCubit, double>(
         builder:
             (context, triangleRotation) => Column(
               children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      ElevatedButton(child: Text('Button 1'), onPressed: () {}),
+                      ElevatedButton(child: Text('Button 2'), onPressed: () {}),
+                      ElevatedButton(child: Text('Button 3'), onPressed: () {}),
+                    ],
+                  ),
+                ),
                 Text(
                   'Position Control',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
@@ -22,7 +33,8 @@ class PositionControl extends StatelessWidget {
                 SizedBox(height: 16),
                 Slider(
                   value: triangleRotation,
-                  max: 2 * pi,
+                  min: -pi,
+                  max: pi,
                   onChanged: (double value) {
                     context.read<TriangleRotationCubit>().setTriangleRotation(
                       value,

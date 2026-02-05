@@ -10,7 +10,7 @@ class DrawFigures extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(top: 32),
+      padding: const EdgeInsets.only(top: 16),
       child: Column(
         children: [
           Text(
