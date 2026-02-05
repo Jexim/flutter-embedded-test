@@ -72,5 +72,6 @@ class DrawFiguresPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
+  bool shouldRepaint(DrawFiguresPainter oldDelegate) =>
+      oldDelegate.angle != angle;
 }
