@@ -1,3 +1,7 @@
 {
     "dart.lineLength": 140,
+    "[python]": {
+        "editor.defaultFormatter": "charliermarsh.ruff",
+        "editor.formatOnSave": true,
+    }
 }
