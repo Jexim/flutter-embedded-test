@@ -1,4 +1,4 @@
-import 'dart:math';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -10,20 +10,14 @@ class DrawFigures extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(top: 16),
+      padding: const EdgeInsets.all(32),
       child: Column(
         children: [
-          Text(
-            'Draw Figures',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
+          Text('Draw Figures', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+          SizedBox(height: 32),
           AspectRatio(
             aspectRatio: 1,
-            child: BlocBuilder<TriangleRotationCubit, double>(
-              builder:
-                  (context, angle) =>
-                      CustomPaint(painter: DrawFiguresPainter(angle)),
-            ),
+            child: BlocBuilder<TriangleRotationCubit, double>(builder: (context, angle) => CustomPaint(painter: DrawFiguresPainter(angle))),
           ),
         ],
       ),
@@ -32,46 +26,49 @@ class DrawFigures extends StatelessWidget {
 }
 
 class DrawFiguresPainter extends CustomPainter {
+  static final circlePaint =
+      Paint()
+        ..color = Colors.blue
+        ..style = PaintingStyle.fill;
+  static final trianglePaint =
+      Paint()
+        ..color = Colors.green
+        ..style = PaintingStyle.fill;
+
   final double angle;
 
   DrawFiguresPainter(this.angle);
 
   @override
   void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height / 2);
-
-    final circlePaint =
-        Paint()
-          ..color = Colors.blue
-          ..style = PaintingStyle.fill;
-    final circleRadius = min(size.width, size.height) * 0.5 - 32;
-    final circleRadiusWithPadding = circleRadius - 16;
-
-    final trianglePaint =
-        Paint()
-          ..color = Colors.green
-          ..style = PaintingStyle.fill;
-    final trianglePath =
-        Path()
-          ..moveTo(
-            center.dx + circleRadiusWithPadding * cos(angle),
-            center.dy + circleRadiusWithPadding * sin(angle),
-          )
-          ..lineTo(
-            center.dx + circleRadiusWithPadding * cos(angle + 2 * pi / 3),
-            center.dy + circleRadiusWithPadding * sin(angle + 2 * pi / 3),
-          )
-          ..lineTo(
-            center.dx + circleRadiusWithPadding * cos(angle + 4 * pi / 3),
-            center.dy + circleRadiusWithPadding * sin(angle + 4 * pi / 3),
-          )
-          ..close();
+    final center = size.center(Offset.zero);
+    final circleRadius = math.min(size.width, size.height) * 0.5;
 
     canvas.drawCircle(center, circleRadius, circlePaint);
+
+    canvas.save();
+    canvas.translate(center.dx, center.dy);
+    canvas.rotate(angle);
+
+    final trianglePath = Path();
+
+    for (var i = 0; i < 3; i++) {
+      final vertex = -math.pi * 0.5 + (i * 2 * math.pi / 3);
+      final x = circleRadius * math.cos(vertex);
+      final y = circleRadius * math.sin(vertex);
+
+      if (i == 0) {
+        trianglePath.moveTo(x, y);
+      } else {
+        trianglePath.lineTo(x, y);
+      }
+    }
+
+    trianglePath.close();
     canvas.drawPath(trianglePath, trianglePaint);
+    canvas.restore();
   }
 
   @override
-  bool shouldRepaint(DrawFiguresPainter oldDelegate) =>
-      oldDelegate.angle != angle;
+  bool shouldRepaint(DrawFiguresPainter oldDelegate) => oldDelegate.angle != angle;
 }

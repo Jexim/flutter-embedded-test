@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:test_gui/widgets/main_stream.dart';
@@ -7,6 +8,8 @@ import 'package:test_gui/widgets/draw_figures.dart';
 import 'package:test_gui/cubit/triangle_rotation_cubit.dart';
 
 void main() {
+  debugRepaintRainbowEnabled = true;
+
   runApp(const MyApp());
 }
 

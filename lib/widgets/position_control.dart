@@ -1,4 +1,4 @@
-import 'dart:math';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -26,27 +26,18 @@ class PositionControl extends StatelessWidget {
                     ],
                   ),
                 ),
-                Text(
-                  'Position Control',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
+                Text('Position Control', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                 SizedBox(height: 16),
                 Slider(
                   value: triangleRotation,
-                  min: -pi,
-                  max: pi,
+                  min: -math.pi,
+                  max: math.pi,
                   onChanged: (double value) {
-                    context.read<TriangleRotationCubit>().setTriangleRotation(
-                      value,
-                    );
+                    context.read<TriangleRotationCubit>().setTriangleRotation(value);
                   },
                 ),
-                Text(
-                  'Current Radians: ${(triangleRotation).toStringAsFixed(2)}',
-                ),
-                Text(
-                  'Current Degrees: ${(triangleRotation * 180 / pi).toStringAsFixed(2)}',
-                ),
+                Text('Current Radians: ${(triangleRotation).toStringAsFixed(2)}'),
+                Text('Current Degrees: ${(triangleRotation * 180 / math.pi).toStringAsFixed(2)}'),
               ],
             ),
       ),
