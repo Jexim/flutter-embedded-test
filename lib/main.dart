@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       home: BlocProvider(
-        create: (_) => TriangleRotationCubit(),
+        create: (_) => TriangleRotationCubit()..start(),
         child: Scaffold(
           body: Row(
             children: [
