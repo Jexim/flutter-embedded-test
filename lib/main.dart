@@ -21,26 +21,19 @@ class MyApp extends StatelessWidget {
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.zero,
-            ),
+            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
           ),
         ),
       ),
-      home: Scaffold(
-        body: Row(
-          children: [
-            AspectRatio(aspectRatio: 4 / 3, child: MainStream()),
-            Expanded(
-              child: BlocProvider(
-                create: (_) => TriangleRotationCubit(),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [PositionControl(), DrawFigures()],
-                ),
-              ),
-            ),
-          ],
+      home: BlocProvider(
+        create: (_) => TriangleRotationCubit(),
+        child: Scaffold(
+          body: Row(
+            children: [
+              AspectRatio(aspectRatio: 4 / 3, child: MainStream()),
+              Expanded(child: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [PositionControl(), DrawFigures()])),
+            ],
+          ),
         ),
       ),
     );
