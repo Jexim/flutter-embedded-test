@@ -9,12 +9,21 @@ class TriangleRotationCubit extends Cubit<double> {
 
   final UdpSensorService _udpSensorService = UdpSensorService();
   StreamSubscription<double>? _streamSubscription;
+  DateTime? _lastEmitTime;
 
   Future<void> start() async {
     try {
       await _udpSensorService.start();
 
-      _streamSubscription ??= _udpSensorService.stream.listen(emit);
+      _streamSubscription ??= _udpSensorService.stream.listen((value) {
+        if (_lastEmitTime != null && DateTime.now().difference(_lastEmitTime!).inSeconds < 1) {
+          return;
+        }
+
+        _lastEmitTime = DateTime.now();
+
+        emit(value);
+      });
     } catch (e, st) {
       debugPrint('$e\n$st');
     }
