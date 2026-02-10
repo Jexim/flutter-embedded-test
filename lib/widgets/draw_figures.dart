@@ -10,15 +10,18 @@ class DrawFigures extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(32),
+      padding: const EdgeInsets.symmetric(horizontal: 32),
       child: Column(
         children: [
-          Text('Draw Figures', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-          SizedBox(height: 32),
+          const Text('Draw Figures', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 32),
           AspectRatio(
             aspectRatio: 1,
-            child: BlocBuilder<TriangleRotationCubit, double>(builder: (context, angle) => CustomPaint(painter: DrawFiguresPainter(angle))),
+            child: BlocBuilder<TriangleRotationCubit, TriangleRotationState>(
+              builder: (context, state) => CustomPaint(painter: DrawFiguresPainter(state.angle)),
+            ),
           ),
+          const SizedBox(height: 32),
         ],
       ),
     );

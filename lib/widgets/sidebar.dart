@@ -16,9 +16,9 @@ class Sidebar extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              ElevatedButton(child: Text('Button 1'), onPressed: () {}),
-              ElevatedButton(child: Text('Button 2'), onPressed: () {}),
-              ElevatedButton(child: Text('Button 3'), onPressed: () {}),
+              ElevatedButton(child: const Text('Button 1'), onPressed: () {}),
+              ElevatedButton(child: const Text('Button 2'), onPressed: () {}),
+              ElevatedButton(child: const Text('Button 3'), onPressed: () {}),
             ],
           ),
         ),
