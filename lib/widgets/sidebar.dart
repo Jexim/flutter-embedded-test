@@ -11,18 +11,22 @@ class Sidebar extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              ElevatedButton(child: const Text('Button 1'), onPressed: () {}),
-              ElevatedButton(child: const Text('Button 2'), onPressed: () {}),
-              ElevatedButton(child: const Text('Button 3'), onPressed: () {}),
-            ],
-          ),
+        Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ElevatedButton(child: const Text('Button 1'), onPressed: () {}),
+                  ElevatedButton(child: const Text('Button 2'), onPressed: () {}),
+                  ElevatedButton(child: const Text('Button 3'), onPressed: () {}),
+                ],
+              ),
+            ),
+            PositionControl(),
+          ],
         ),
-        PositionControl(),
         DrawFigures(),
       ],
     );

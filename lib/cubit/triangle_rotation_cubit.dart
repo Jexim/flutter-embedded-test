@@ -5,14 +5,15 @@ import 'package:flutter/foundation.dart';
 import 'package:test_gui/services/udp_sensor.dart';
 
 final class TriangleRotationState {
-  final double angle;
+  final double sensorAngle;
+  final double manualAngle;
   final bool isManual;
 
-  TriangleRotationState({required this.angle, required this.isManual});
+  TriangleRotationState({required this.sensorAngle, required this.isManual, required this.manualAngle});
 }
 
 class TriangleRotationCubit extends Cubit<TriangleRotationState> {
-  TriangleRotationCubit() : super(TriangleRotationState(angle: 0, isManual: false));
+  TriangleRotationCubit() : super(TriangleRotationState(sensorAngle: 0, isManual: false, manualAngle: 0));
 
   final UdpSensorService _udpSensorService = UdpSensorService();
   StreamSubscription<double>? _streamSubscription;
@@ -30,7 +31,7 @@ class TriangleRotationCubit extends Cubit<TriangleRotationState> {
 
         _lastEmitTime = DateTime.now();
 
-        emit(TriangleRotationState(angle: value, isManual: state.isManual));
+        emit(TriangleRotationState(sensorAngle: value, isManual: state.isManual, manualAngle: state.manualAngle));
       });
     } catch (e, st) {
       debugPrint('$e\n$st');
@@ -38,11 +39,11 @@ class TriangleRotationCubit extends Cubit<TriangleRotationState> {
   }
 
   void setTriangleRotation(double triangleRotation) {
-    emit(TriangleRotationState(angle: triangleRotation, isManual: state.isManual));
+    emit(TriangleRotationState(sensorAngle: triangleRotation, manualAngle: triangleRotation, isManual: state.isManual));
   }
 
   void setIsManual(bool isManual) {
-    emit(TriangleRotationState(angle: state.angle, isManual: isManual));
+    emit(TriangleRotationState(isManual: isManual, sensorAngle: state.sensorAngle, manualAngle: state.manualAngle));
   }
 
   @override

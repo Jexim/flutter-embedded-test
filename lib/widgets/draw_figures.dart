@@ -14,14 +14,27 @@ class DrawFigures extends StatelessWidget {
       child: Column(
         children: [
           const Text('Draw Figures', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 32),
-          AspectRatio(
-            aspectRatio: 1,
-            child: BlocBuilder<TriangleRotationCubit, TriangleRotationState>(
-              builder: (context, state) => CustomPaint(painter: DrawFiguresPainter(state.angle)),
-            ),
+          const SizedBox(height: 16),
+          BlocSelector<TriangleRotationCubit, TriangleRotationState, double>(
+            selector: (s) => s.isManual ? s.manualAngle : s.sensorAngle,
+            builder:
+                (context, v) => RepaintBoundary(
+                  child: Column(
+                    children: [
+                      AspectRatio(aspectRatio: 1, child: CustomPaint(painter: DrawFiguresPainter(v))),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 32, top: 16),
+                        child: Column(
+                          children: [
+                            Text('Current Radians: ${(v).toStringAsFixed(2)}'),
+                            Text('Current Degrees: ${(v * 180 / math.pi).toStringAsFixed(2)}'),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
           ),
-          const SizedBox(height: 32),
         ],
       ),
     );

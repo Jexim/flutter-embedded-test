@@ -10,7 +10,7 @@ class PositionControl extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Column(
         children: [
           const Text('Position Control', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
@@ -27,13 +27,11 @@ class PositionControl extends StatelessWidget {
                       child: BlocSelector<TriangleRotationCubit, TriangleRotationState, bool>(
                         selector: (s) => s.isManual,
                         builder:
-                            (context, v) => RepaintBoundary(
-                              child: Switch(
-                                value: v,
-                                onChanged: (bool value) {
-                                  context.read<TriangleRotationCubit>().setIsManual(value);
-                                },
-                              ),
+                            (context, v) => Switch(
+                              value: v,
+                              onChanged: (bool value) {
+                                context.read<TriangleRotationCubit>().setIsManual(value);
+                              },
                             ),
                       ),
                     ),
@@ -41,29 +39,21 @@ class PositionControl extends StatelessWidget {
                   ],
                 ),
               ),
-
-              BlocBuilder<TriangleRotationCubit, TriangleRotationState>(
+              BlocSelector<TriangleRotationCubit, TriangleRotationState, ({double manualAngle, bool isManual})>(
+                selector: (s) => (manualAngle: s.manualAngle, isManual: s.isManual),
                 builder:
-                    (context, state) => Slider(
-                      value: state.angle,
-                      min: -math.pi,
-                      max: math.pi,
-                      onChanged:
-                          !state.isManual
-                              ? null
-                              : (double value) {
-                                context.read<TriangleRotationCubit>().setTriangleRotation(value);
-                              },
-                    ),
-              ),
-              BlocSelector<TriangleRotationCubit, TriangleRotationState, double>(
-                selector: (s) => s.angle,
-                builder:
-                    (context, v) => Column(
-                      children: [
-                        Text('Current Radians: ${(v).toStringAsFixed(2)}'),
-                        Text('Current Degrees: ${(v * 180 / math.pi).toStringAsFixed(2)}'),
-                      ],
+                    (context, state) => RepaintBoundary(
+                      child: Slider(
+                        value: state.manualAngle,
+                        min: -math.pi,
+                        max: math.pi,
+                        onChanged:
+                            !state.isManual
+                                ? null
+                                : (double value) {
+                                  context.read<TriangleRotationCubit>().setTriangleRotation(value);
+                                },
+                      ),
                     ),
               ),
             ],
