@@ -16,7 +16,7 @@ class DrawFigures extends StatelessWidget {
           const Text('Draw Figures', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           BlocSelector<TriangleRotationCubit, TriangleRotationState, double>(
-            selector: (s) => s.isManual ? s.manualAngle : s.sensorAngle,
+            selector: (s) => s.angle,
             builder:
                 (context, v) => RepaintBoundary(
                   child: Column(

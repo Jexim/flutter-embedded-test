@@ -21,38 +21,38 @@ class PositionControl extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text('Change by Sensor'),
+                    const Text('Change by User'),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8),
                       child: BlocSelector<TriangleRotationCubit, TriangleRotationState, bool>(
-                        selector: (s) => s.isManual,
+                        selector: (state) => state is TriangleRotationSensor,
                         builder:
-                            (context, v) => Switch(
-                              value: v,
+                            (context, isSensor) => Switch(
+                              value: isSensor,
                               onChanged: (bool value) {
-                                context.read<TriangleRotationCubit>().setIsManual(value);
+                                context.read<TriangleRotationCubit>().setIsSensor(value);
                               },
                             ),
                       ),
                     ),
-                    const Text('Change by User'),
+                    const Text('Change by Sensor'),
                   ],
                 ),
               ),
-              BlocSelector<TriangleRotationCubit, TriangleRotationState, ({double manualAngle, bool isManual})>(
-                selector: (s) => (manualAngle: s.manualAngle, isManual: s.isManual),
+              BlocSelector<TriangleRotationCubit, TriangleRotationState, ({bool isManual, double angle})>(
+                selector: (s) => (isManual: s is TriangleRotationManual, angle: s.angle),
                 builder:
-                    (context, state) => RepaintBoundary(
+                    (context, data) => RepaintBoundary(
                       child: Slider(
-                        value: state.manualAngle,
+                        value: data.angle,
                         min: -math.pi,
                         max: math.pi,
                         onChanged:
-                            !state.isManual
-                                ? null
-                                : (double value) {
+                            data.isManual
+                                ? (double value) {
                                   context.read<TriangleRotationCubit>().setTriangleRotation(value);
-                                },
+                                }
+                                : null,
                       ),
                     ),
               ),

@@ -1,19 +1,35 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/foundation.dart';
+import 'package:equatable/equatable.dart';
 
 import 'package:test_gui/services/udp_sensor.dart';
 
-final class TriangleRotationState {
-  final double sensorAngle;
-  final double manualAngle;
-  final bool isManual;
+sealed class TriangleRotationState extends Equatable {
+  final double angle;
 
-  TriangleRotationState({required this.sensorAngle, required this.isManual, required this.manualAngle});
+  const TriangleRotationState({required this.angle});
+
+  @override
+  List<Object?> get props => [angle];
+}
+
+final class TriangleRotationManual extends TriangleRotationState {
+  const TriangleRotationManual({required super.angle});
+
+  @override
+  String toString() => 'TriangleRotationManual { angle: $angle }';
+}
+
+final class TriangleRotationSensor extends TriangleRotationState {
+  const TriangleRotationSensor({required super.angle});
+
+  @override
+  String toString() => 'TriangleRotationSensor { angle: $angle }';
 }
 
 class TriangleRotationCubit extends Cubit<TriangleRotationState> {
-  TriangleRotationCubit() : super(TriangleRotationState(sensorAngle: 0, isManual: false, manualAngle: 0));
+  TriangleRotationCubit() : super(const TriangleRotationManual(angle: 0));
 
   final UdpSensorService _udpSensorService = UdpSensorService();
   StreamSubscription<double>? _streamSubscription;
@@ -24,14 +40,14 @@ class TriangleRotationCubit extends Cubit<TriangleRotationState> {
       await _udpSensorService.start();
 
       _streamSubscription ??= _udpSensorService.stream.listen((value) {
-        if (state.isManual) return;
+        if (state is TriangleRotationManual) return;
         if (_lastEmitTime != null && DateTime.now().difference(_lastEmitTime!).inMilliseconds < 1000) {
           return;
         }
 
         _lastEmitTime = DateTime.now();
 
-        emit(TriangleRotationState(sensorAngle: value, isManual: state.isManual, manualAngle: state.manualAngle));
+        emit(TriangleRotationSensor(angle: value));
       });
     } catch (e, st) {
       debugPrint('$e\n$st');
@@ -39,11 +55,11 @@ class TriangleRotationCubit extends Cubit<TriangleRotationState> {
   }
 
   void setTriangleRotation(double triangleRotation) {
-    emit(TriangleRotationState(manualAngle: triangleRotation, sensorAngle: state.sensorAngle, isManual: state.isManual));
+    emit(TriangleRotationManual(angle: triangleRotation));
   }
 
-  void setIsManual(bool isManual) {
-    emit(TriangleRotationState(isManual: isManual, sensorAngle: state.sensorAngle, manualAngle: state.manualAngle));
+  void setIsSensor(bool isSensor) {
+    emit(isSensor ? TriangleRotationSensor(angle: state.angle) : TriangleRotationManual(angle: state.angle));
   }
 
   @override
