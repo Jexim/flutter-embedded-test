@@ -39,7 +39,7 @@ class TriangleRotationCubit extends Cubit<TriangleRotationState> {
   }
 
   void setTriangleRotation(double triangleRotation) {
-    emit(TriangleRotationState(sensorAngle: triangleRotation, manualAngle: triangleRotation, isManual: state.isManual));
+    emit(TriangleRotationState(manualAngle: triangleRotation, sensorAngle: state.sensorAngle, isManual: state.isManual));
   }
 
   void setIsManual(bool isManual) {
