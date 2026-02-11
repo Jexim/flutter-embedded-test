@@ -25,7 +25,7 @@ class TriangleRotationCubit extends Cubit<TriangleRotationState> {
 
       _streamSubscription ??= _udpSensorService.stream.listen((value) {
         if (state.isManual) return;
-        if (_lastEmitTime != null && DateTime.now().difference(_lastEmitTime!).inSeconds < 1) {
+        if (_lastEmitTime != null && DateTime.now().difference(_lastEmitTime!).inMilliseconds < 1000) {
           return;
         }
 
