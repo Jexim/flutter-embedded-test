@@ -13,17 +13,15 @@ class Sidebar extends StatelessWidget {
       children: [
         Column(
           children: [
-            RepaintBoundary(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    ElevatedButton(child: const Text('Button 1'), onPressed: () {}),
-                    ElevatedButton(child: const Text('Button 2'), onPressed: () {}),
-                    ElevatedButton(child: const Text('Button 3'), onPressed: () {}),
-                  ],
-                ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ElevatedButton(child: const Text('Button 1'), onPressed: () {}),
+                  ElevatedButton(child: const Text('Button 2'), onPressed: () {}),
+                  ElevatedButton(child: const Text('Button 3'), onPressed: () {}),
+                ],
               ),
             ),
             PositionControl(),
