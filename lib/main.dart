@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,9 +8,11 @@ import 'package:test_gui/widgets/sidebar.dart';
 import 'package:test_gui/cubit/triangle_rotation_cubit.dart';
 
 void main() {
-  debugRepaintRainbowEnabled = true;
-  // debugPrintMarkNeedsPaintStacks = true;
-  // debugPrintRebuildDirtyWidgets = true;
+  if (kDebugMode) {
+    debugRepaintRainbowEnabled = true;
+    // debugPrintMarkNeedsPaintStacks = true;
+    // debyugPrintRebuildDirtyWidgets = true;
+  }
 
   runApp(const MyApp());
 }
