@@ -24,11 +24,15 @@ class DrawFigures extends StatelessWidget {
                       AspectRatio(aspectRatio: 1, child: CustomPaint(painter: DrawFiguresPainter(v))),
                       Padding(
                         padding: const EdgeInsets.only(bottom: 32, top: 16),
-                        child: Column(
-                          children: [
-                            Text('Current Radians: ${(v).toStringAsFixed(2)}'),
-                            Text('Current Degrees: ${(v * 180 / math.pi).toStringAsFixed(2)}'),
-                          ],
+                        child: SizedBox(
+                          width: 300,
+                          height: 42,
+                          child: Column(
+                            children: [
+                              Text('Current Radians: ${(v).toStringAsFixed(2)}'),
+                              Text('Current Degrees: ${(v * 180 / math.pi).toStringAsFixed(2)}'),
+                            ],
+                          ),
                         ),
                       ),
                     ],
