@@ -39,11 +39,15 @@ class _AngleButtons extends StatelessWidget {
           context.read<TriangleRotationCubit>().setTriangleRotation(next);
         }
 
+        void reset() {
+          context.read<TriangleRotationCubit>().setTriangleRotation(0);
+        }
+
         return Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             ElevatedButton(onPressed: isManual ? () => setStep(-0.1) : null, child: const Text('Minus 0.1 rad')),
-            ElevatedButton(onPressed: isManual ? () => setStep(0) : null, child: const Text('Reset')),
+            ElevatedButton(onPressed: isManual ? reset : null, child: const Text('Reset')),
             ElevatedButton(onPressed: isManual ? () => setStep(0.1) : null, child: const Text('Plus 0.1 rad')),
           ],
         );
