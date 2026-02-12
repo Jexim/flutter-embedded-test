@@ -13,9 +13,10 @@ class PositionControl extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Column(
         children: [
-          Padding(padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32), child: _AngleButtons()),
+          const SizedBox(height: 16),
           const Text('Position Control', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-          Padding(padding: const EdgeInsets.all(8), child: _ModeSwitch()),
+          const Padding(padding: EdgeInsets.only(top: 8), child: _ModeSwitch()),
+          const Padding(padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16), child: _AngleButtons()),
           _AngleSlider(),
         ],
       ),
