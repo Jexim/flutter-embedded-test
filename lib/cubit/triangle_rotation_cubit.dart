@@ -40,7 +40,7 @@ class TriangleRotationCubit extends Cubit<TriangleRotationState> {
     try {
       await _udpSensorService.start();
 
-      _streamSubscription ??= _udpSensorService.stream.listen((value) {
+      _streamSubscription ??= _udpSensorService.stream.where((v) => v.isFinite && v >= -math.pi && v <= math.pi).listen((value) {
         if (state is TriangleRotationManual) return;
         if (_lastEmitTime != null && DateTime.now().difference(_lastEmitTime!).inMilliseconds < 1000) {
           return;
@@ -48,7 +48,7 @@ class TriangleRotationCubit extends Cubit<TriangleRotationState> {
 
         _lastEmitTime = DateTime.now();
 
-        emit(TriangleRotationSensor(angle: value.clamp(-math.pi, math.pi).toDouble()));
+        emit(TriangleRotationSensor(angle: value));
       });
     } catch (e, st) {
       debugPrint('$e\n$st');
