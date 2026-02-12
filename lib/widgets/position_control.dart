@@ -28,41 +28,25 @@ class _AngleButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocSelector<TriangleRotationCubit, TriangleRotationState, ({bool isManual, double angle})>(
-      selector: (s) => (isManual: s is TriangleRotationManual, angle: s.angle),
-      builder:
-          (context, data) => Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              ElevatedButton(
-                onPressed:
-                    data.isManual
-                        ? () {
-                          context.read<TriangleRotationCubit>().setTriangleRotation((data.angle - 0.1).clamp(-math.pi, math.pi).toDouble());
-                        }
-                        : null,
-                child: const Text('Minus 0.1 rad'),
-              ),
-              ElevatedButton(
-                onPressed:
-                    data.isManual
-                        ? () {
-                          context.read<TriangleRotationCubit>().setTriangleRotation(0);
-                        }
-                        : null,
-                child: const Text('Reset'),
-              ),
-              ElevatedButton(
-                onPressed:
-                    data.isManual
-                        ? () {
-                          context.read<TriangleRotationCubit>().setTriangleRotation((data.angle + 0.1).clamp(-math.pi, math.pi).toDouble());
-                        }
-                        : null,
-                child: const Text('Plus 0.1 rad'),
-              ),
-            ],
-          ),
+    return BlocSelector<TriangleRotationCubit, TriangleRotationState, bool>(
+      selector: (s) => s is TriangleRotationManual,
+      builder: (context, isManual) {
+        void setStep(double delta) {
+          final angle = context.read<TriangleRotationCubit>().state.angle;
+          final next = (angle + delta).clamp(-math.pi, math.pi).toDouble();
+
+          context.read<TriangleRotationCubit>().setTriangleRotation(next);
+        }
+
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            ElevatedButton(onPressed: isManual ? () => setStep(-0.1) : null, child: const Text('Minus 0.1 rad')),
+            ElevatedButton(onPressed: isManual ? () => setStep(0) : null, child: const Text('Reset')),
+            ElevatedButton(onPressed: isManual ? () => setStep(0.1) : null, child: const Text('Plus 0.1 rad')),
+          ],
+        );
+      },
     );
   }
 }
