@@ -8,27 +8,6 @@ class Sidebar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ElevatedButton(child: const Text('Button 1'), onPressed: () {}),
-                  ElevatedButton(child: const Text('Button 2'), onPressed: () {}),
-                  ElevatedButton(child: const Text('Button 3'), onPressed: () {}),
-                ],
-              ),
-            ),
-            PositionControl(),
-          ],
-        ),
-        DrawFigures(),
-      ],
-    );
+    return Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [PositionControl(), DrawFigures()]);
   }
 }

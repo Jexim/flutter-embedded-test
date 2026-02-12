@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:equatable/equatable.dart';
@@ -47,15 +48,15 @@ class TriangleRotationCubit extends Cubit<TriangleRotationState> {
 
         _lastEmitTime = DateTime.now();
 
-        emit(TriangleRotationSensor(angle: value));
+        emit(TriangleRotationSensor(angle: value.clamp(-math.pi, math.pi).toDouble()));
       });
     } catch (e, st) {
       debugPrint('$e\n$st');
     }
   }
 
-  void setTriangleRotation(double triangleRotation) {
-    emit(TriangleRotationManual(angle: triangleRotation));
+  void setTriangleRotation(double angle) {
+    emit(TriangleRotationManual(angle: angle.clamp(-math.pi, math.pi).toDouble()));
   }
 
   void setIsSensor(bool isSensor) {
