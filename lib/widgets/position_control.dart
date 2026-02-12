@@ -34,7 +34,7 @@ class _AngleButtons extends StatelessWidget {
       builder: (context, isManual) {
         void setStep(double delta) {
           final angle = context.read<TriangleRotationCubit>().state.angle;
-          final next = (angle + delta).clamp(-math.pi, math.pi).toDouble();
+          final next = (angle + delta * math.pi / 180).clamp(-math.pi, math.pi).toDouble();
 
           context.read<TriangleRotationCubit>().setTriangleRotation(next);
         }
@@ -46,9 +46,9 @@ class _AngleButtons extends StatelessWidget {
         return Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            ElevatedButton(onPressed: isManual ? () => setStep(-0.1) : null, child: const Text('Minus 0.1 rad')),
+            ElevatedButton(onPressed: isManual ? () => setStep(-10) : null, child: const Text('Minus 10°')),
             ElevatedButton(onPressed: isManual ? reset : null, child: const Text('Reset')),
-            ElevatedButton(onPressed: isManual ? () => setStep(0.1) : null, child: const Text('Plus 0.1 rad')),
+            ElevatedButton(onPressed: isManual ? () => setStep(10) : null, child: const Text('Plus 10°')),
           ],
         );
       },
