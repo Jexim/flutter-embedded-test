@@ -2,7 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:test_gui/cubit/triangle_rotation_cubit.dart';
+import 'package:test_gui/models/angle_cubit.dart';
 
 class PositionControl extends StatelessWidget {
   const PositionControl({super.key});
@@ -29,20 +29,20 @@ class _AngleButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocSelector<TriangleRotationCubit, TriangleRotationState, bool>(
-      selector: (s) => s is TriangleRotationManual,
+    return BlocSelector<AngleCubit, AngleState, bool>(
+      selector: (s) => s is AngleManual,
       builder: (context, isManual) {
-        final triangleRotationCubit = context.read<TriangleRotationCubit>();
+        final angleCubit = context.read<AngleCubit>();
 
         void setStep(double delta) {
-          final angle = triangleRotationCubit.state.angle;
+          final angle = angleCubit.state.angle;
           final next = (angle + delta * math.pi / 180).clamp(-math.pi, math.pi).toDouble();
 
-          triangleRotationCubit.setTriangleRotation(next);
+          angleCubit.setAngle(next);
         }
 
         void reset() {
-          triangleRotationCubit.setTriangleRotation(0);
+          angleCubit.setAngle(0);
         }
 
         return Row(
@@ -67,7 +67,7 @@ class _ModeSwitch extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Column(
         children: [
-          BlocBuilder<TriangleRotationCubit, TriangleRotationState>(
+          BlocBuilder<AngleCubit, AngleState>(
             buildWhen: (previous, current) => previous.runtimeType != current.runtimeType,
             builder:
                 (context, state) => Column(
@@ -78,17 +78,17 @@ class _ModeSwitch extends StatelessWidget {
                       children: [
                         const Text('User'),
                         Switch(
-                          value: state is TriangleRotationSensor,
+                          value: state is AngleSensor,
                           onChanged: (bool value) {
-                            context.read<TriangleRotationCubit>().setIsSensor(value);
+                            context.read<AngleCubit>().setIsSensor(value);
                           },
                         ),
                         const Text('Sensor'),
                       ],
                     ),
                     switch (state) {
-                      TriangleRotationSensor() => const Text('Change by Sensor'),
-                      TriangleRotationManual() => const Text('Change by User'),
+                      AngleSensor() => const Text('Change by Sensor'),
+                      AngleManual() => const Text('Change by User'),
                     },
                   ],
                 ),
@@ -104,8 +104,8 @@ class _AngleSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocSelector<TriangleRotationCubit, TriangleRotationState, ({bool isManual, double angle})>(
-      selector: (s) => (isManual: s is TriangleRotationManual, angle: s.angle),
+    return BlocSelector<AngleCubit, AngleState, ({bool isManual, double angle})>(
+      selector: (s) => (isManual: s is AngleManual, angle: s.angle),
       builder:
           (context, data) => RepaintBoundary(
             child: Slider(
@@ -116,7 +116,7 @@ class _AngleSlider extends StatelessWidget {
               onChanged:
                   data.isManual
                       ? (double value) {
-                        context.read<TriangleRotationCubit>().setTriangleRotation(value);
+                        context.read<AngleCubit>().setAngle(value);
                       }
                       : null,
             ),

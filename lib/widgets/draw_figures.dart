@@ -2,7 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:test_gui/cubit/triangle_rotation_cubit.dart';
+import 'package:test_gui/models/angle_cubit.dart';
 
 class DrawFigures extends StatelessWidget {
   const DrawFigures({super.key});
@@ -15,7 +15,7 @@ class DrawFigures extends StatelessWidget {
         children: [
           const Text('Draw Figures', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
-          BlocSelector<TriangleRotationCubit, TriangleRotationState, double>(
+          BlocSelector<AngleCubit, AngleState, double>(
             selector: (s) => s.angle,
             builder:
                 (context, v) => RepaintBoundary(

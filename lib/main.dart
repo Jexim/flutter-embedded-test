@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:test_gui/io/udp_angle_sensor.dart';
+import 'package:test_gui/models/angle_cubit.dart';
 import 'package:test_gui/widgets/main_stream.dart';
 import 'package:test_gui/widgets/sidebar.dart';
-import 'package:test_gui/cubit/triangle_rotation_cubit.dart';
 
 void main() {
   if (kDebugMode) {
@@ -32,9 +33,13 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: BlocProvider(
-        create: (_) => TriangleRotationCubit()..start(),
-        child: Scaffold(body: Row(children: [AspectRatio(aspectRatio: 4 / 3, child: MainStream()), Expanded(child: Sidebar())])),
+      home: RepositoryProvider(
+        create: (_) => AngleSensorRepository(UdpAngleSensorReader()),
+        dispose: (repo) => repo.dispose(),
+        child: BlocProvider(
+          create: (context) => AngleCubit(context.read<AngleSensorRepository>()),
+          child: Scaffold(body: Row(children: [AspectRatio(aspectRatio: 4 / 3, child: MainStream()), Expanded(child: Sidebar())])),
+        ),
       ),
     );
   }
