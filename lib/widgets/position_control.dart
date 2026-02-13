@@ -61,25 +61,38 @@ class _ModeSwitch extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Text('Change by User'),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: BlocSelector<TriangleRotationCubit, TriangleRotationState, bool>(
-            selector: (state) => state is TriangleRotationSensor,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Column(
+        children: [
+          BlocBuilder<TriangleRotationCubit, TriangleRotationState>(
+            buildWhen: (previous, current) => previous.runtimeType != current.runtimeType,
             builder:
-                (context, isSensor) => Switch(
-                  value: isSensor,
-                  onChanged: (bool value) {
-                    context.read<TriangleRotationCubit>().setIsSensor(value);
-                  },
+                (context, state) => Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      spacing: 8,
+                      children: [
+                        const Text('User'),
+                        Switch(
+                          value: state is TriangleRotationSensor,
+                          onChanged: (bool value) {
+                            context.read<TriangleRotationCubit>().setIsSensor(value);
+                          },
+                        ),
+                        const Text('Sensor'),
+                      ],
+                    ),
+                    switch (state) {
+                      TriangleRotationSensor() => const Text('Change by Sensor'),
+                      TriangleRotationManual() => const Text('Change by User'),
+                    },
+                  ],
                 ),
           ),
-        ),
-        const Text('Change by Sensor'),
-      ],
+        ],
+      ),
     );
   }
 }
