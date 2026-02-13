@@ -32,15 +32,17 @@ class _AngleButtons extends StatelessWidget {
     return BlocSelector<TriangleRotationCubit, TriangleRotationState, bool>(
       selector: (s) => s is TriangleRotationManual,
       builder: (context, isManual) {
+        final triangleRotationCubit = context.read<TriangleRotationCubit>();
+
         void setStep(double delta) {
-          final angle = context.read<TriangleRotationCubit>().state.angle;
+          final angle = triangleRotationCubit.state.angle;
           final next = (angle + delta * math.pi / 180).clamp(-math.pi, math.pi).toDouble();
 
-          context.read<TriangleRotationCubit>().setTriangleRotation(next);
+          triangleRotationCubit.setTriangleRotation(next);
         }
 
         void reset() {
-          context.read<TriangleRotationCubit>().setTriangleRotation(0);
+          triangleRotationCubit.setTriangleRotation(0);
         }
 
         return Row(
