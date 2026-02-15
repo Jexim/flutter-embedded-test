@@ -27,7 +27,7 @@ class AngleCubit extends Cubit<AngleState> {
   void setAngle(double angle) {
     if (!state.isManual) return;
 
-    emit(state.copyWith(angle: angle.clamp(-math.pi, math.pi).toDouble()));
+    emit(state.copyWith(angle: angle.clamp(-math.pi * 2, math.pi * 2).toDouble()));
   }
 
   Future<void> setIsManual(bool isManual) async {

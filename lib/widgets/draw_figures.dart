@@ -74,7 +74,6 @@ class DrawFiguresPainter extends CustomPainter {
     final circleRadius = math.min(size.width, size.height) * 0.5;
 
     canvas.drawCircle(center, circleRadius, circlePaint);
-
     canvas.save();
     canvas.translate(center.dx, center.dy);
     canvas.rotate(angle);
@@ -95,6 +94,7 @@ class DrawFiguresPainter extends CustomPainter {
     }
 
     trianglePath.close();
+
     canvas.drawPath(trianglePath, trianglePaint);
     canvas.restore();
   }

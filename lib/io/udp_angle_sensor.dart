@@ -41,7 +41,7 @@ final class UdpAngleSensorReader extends Stream<double> {
                   final value = double.tryParse(msg);
 
                   if (value == null) continue;
-                  if (value < -math.pi || value > math.pi) continue;
+                  if (value < -math.pi * 2 || value > math.pi * 2) continue;
 
                   _controller.add(value);
                 }

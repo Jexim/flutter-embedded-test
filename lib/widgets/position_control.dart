@@ -88,8 +88,8 @@ class _AngleSlider extends StatelessWidget {
       child: Slider(
         key: ValueKey(angleState.isManual),
         value: angleState.angle,
-        min: -math.pi,
-        max: math.pi,
+        min: -math.pi * 2,
+        max: math.pi * 2,
         onChanged:
             angleState.isManual
                 ? (double value) {

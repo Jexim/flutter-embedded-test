@@ -19,8 +19,8 @@ try:
     while True:
         value += 0.01
 
-        if value > math.pi:
-            value = -math.pi
+        if value > math.pi * 2:
+            value = -math.pi * 2
 
         message = f"{value:.5f}\n"
 
