@@ -3,43 +3,52 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:test_gui/models/angle_cubit.dart';
+import 'package:test_gui/utils/geometry.dart';
 
-class DrawFigures extends StatelessWidget {
+class DrawFigures extends StatefulWidget {
   const DrawFigures({super.key});
 
   @override
+  State<DrawFigures> createState() => _DrawFiguresState();
+}
+
+class _DrawFiguresState extends State<DrawFigures> {
+  double previousAngle = 0;
+
+  @override
   Widget build(BuildContext context) {
-    return Container(
+    return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32),
-      child: Column(
-        children: [
-          const Text('Draw Figures', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 16),
-          BlocSelector<AngleCubit, AngleState, double>(
-            selector: (s) => s.angle,
-            builder:
-                (context, v) => RepaintBoundary(
-                  child: Column(
-                    children: [
-                      AspectRatio(aspectRatio: 1, child: CustomPaint(painter: DrawFiguresPainter(v))),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 32, top: 16),
-                        child: SizedBox(
-                          width: 300,
-                          height: 42,
-                          child: Column(
-                            children: [
-                              Text('Current Radians: ${(v).toStringAsFixed(2)}'),
-                              Text('Current Degrees: ${(v * 180 / math.pi).toStringAsFixed(2)}'),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
+      child: BlocBuilder<AngleCubit, AngleState>(
+        buildWhen: (previous, current) {
+          if (degrees(previousAngle - current.angle).abs() >= 1) {
+            previousAngle = current.angle;
+
+            return true;
+          }
+
+          return false;
+        },
+        builder:
+            (context, state) => RepaintBoundary(
+              child: Column(
+                spacing: 16,
+                children: [
+                  const Text('Draw Figures', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                  AspectRatio(aspectRatio: 1, child: CustomPaint(painter: DrawFiguresPainter(state.angle))),
+                  SizedBox(
+                    width: 300,
+                    height: 64,
+                    child: Column(
+                      children: [
+                        Text('Current Radians: ${(state.angle).toStringAsFixed(2)}'),
+                        Text('Current Degrees: ${degrees(state.angle).toStringAsFixed(2)}'),
+                      ],
+                    ),
                   ),
-                ),
-          ),
-        ],
+                ],
+              ),
+            ),
       ),
     );
   }
@@ -79,6 +88,7 @@ class DrawFiguresPainter extends CustomPainter {
 
       if (i == 0) {
         trianglePath.moveTo(x, y);
+        canvas.drawCircle(Offset(x, y), 8, Paint()..color = Colors.red);
       } else {
         trianglePath.lineTo(x, y);
       }

@@ -1,97 +1,73 @@
 import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
-import 'dart:typed_data';
 import 'dart:math' as math;
 
-final class UdpAngleSensorReader {
-  static const int _port = 6001;
-  bool _starting = false;
-  RawDatagramSocket? _socket;
-  final StreamController<Uint8List> _streamController = StreamController<Uint8List>.broadcast();
+final class UdpAngleSensorReader extends Stream<double> {
+  static UdpAngleSensorReader? _instance;
 
-  Stream<Uint8List> get stream {
-    return _streamController.stream;
+  late final StreamController<double> _controller;
+
+  RawDatagramSocket? _socket;
+  StreamSubscription<RawSocketEvent>? _socketSub;
+
+  static const int _port = 6001;
+
+  factory UdpAngleSensorReader() {
+    _instance ??= UdpAngleSensorReader._internal();
+    return _instance!;
   }
 
-  Future<void> start() async {
-    if (_starting || _socket != null) return;
+  UdpAngleSensorReader._internal() {
+    _controller = StreamController<double>.broadcast(onListen: _onListen, onCancel: _onCancel, sync: true);
+  }
 
+  @override
+  StreamSubscription<double> listen(void Function(double)? onData, {Function? onError, void Function()? onDone, bool? cancelOnError}) =>
+      _controller.stream.listen(onData, onError: onError, onDone: onDone, cancelOnError: cancelOnError);
+
+  void _onListen() async {
     try {
-      _starting = true;
-      _socket = await RawDatagramSocket.bind(InternetAddress.loopbackIPv4, _port);
+      _socket ??= await RawDatagramSocket.bind(InternetAddress.loopbackIPv4, _port);
 
-      _socket!.listen((event) {
-        if (event != RawSocketEvent.read) return;
+      _socketSub ??= _socket!
+          .where((event) => event == RawSocketEvent.read)
+          .listen(
+            (_) {
+              try {
+                Datagram? dg;
+                while ((dg = _socket!.receive()) != null) {
+                  final msg = utf8.decode(dg!.data);
+                  final value = double.tryParse(msg);
 
-        while (true) {
-          final dg = _socket!.receive();
+                  if (value == null) continue;
+                  if (value < -math.pi || value > math.pi) continue;
 
-          if (dg == null) break;
-
-          _streamController.add(dg.data);
-        }
-      });
-    } finally {
-      _starting = false;
+                  _controller.add(value);
+                }
+              } catch (e, st) {
+                _controller.addError(e, st);
+              }
+            },
+            onError: (e, st) => _controller.addError(e, st),
+            onDone: _cleanupSocket,
+          );
+    } catch (e, st) {
+      _controller.addError(e, st);
     }
   }
 
-  Future<void> stop() async {
+  void _onCancel() {
+    _cleanupSocket();
+    _controller.close();
+    _instance = null;
+  }
+
+  void _cleanupSocket() {
+    _socketSub?.cancel();
+    _socketSub = null;
+
     _socket?.close();
     _socket = null;
-  }
-
-  Future<void> dispose() async {
-    await stop();
-    await _streamController.close();
-  }
-}
-
-final class AngleSensorRepository {
-  AngleSensorRepository(this._reader);
-
-  final UdpAngleSensorReader _reader;
-  StreamSubscription<Uint8List>? _subscription;
-  final _streamController = StreamController<double>.broadcast();
-  DateTime? _lastEmitTime;
-
-  Stream<double> get stream => _streamController.stream;
-
-  Future<void> start() async {
-    if (_subscription != null) return;
-
-    await _reader.start();
-
-    _subscription = _reader.stream.listen((data) {
-      final value = double.tryParse(utf8.decode(data).trim());
-
-      if (value == null || !value.isFinite) return;
-
-      final now = DateTime.now();
-
-      if (_lastEmitTime != null && now.difference(_lastEmitTime!).inMilliseconds < 1000) {
-        return;
-      }
-
-      _lastEmitTime = now;
-
-      final clampedValue = value.clamp(-math.pi, math.pi).toDouble();
-
-      _streamController.add(clampedValue);
-    });
-  }
-
-  Future<void> stop() async {
-    await _subscription?.cancel();
-    _subscription = null;
-    _lastEmitTime = null;
-    await _reader.stop();
-  }
-
-  Future<void> dispose() async {
-    await stop();
-    await _streamController.close();
-    await _reader.dispose();
   }
 }

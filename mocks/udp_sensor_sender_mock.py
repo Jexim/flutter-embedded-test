@@ -1,6 +1,5 @@
 import socket
 import time
-import random
 import math
 import sys
 
@@ -16,8 +15,13 @@ except socket.error as e:
     sys.exit(1)
 
 try:
+    value = 0.0
     while True:
-        value = random.uniform(-math.pi, math.pi)
+        value += 0.01
+
+        if value > math.pi:
+            value = -math.pi
+
         message = f"{value:.5f}\n"
 
         s.sendto(message.encode("utf-8"), (HOST, PORT))

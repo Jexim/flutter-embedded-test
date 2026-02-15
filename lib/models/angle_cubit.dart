@@ -5,68 +5,57 @@ import 'package:equatable/equatable.dart';
 
 import 'package:test_gui/io/udp_angle_sensor.dart';
 
-sealed class AngleState extends Equatable {
+class AngleState extends Equatable {
   final double angle;
+  final bool isManual;
 
-  const AngleState({required this.angle});
-
-  @override
-  List<Object?> get props => [angle];
-}
-
-final class AngleManual extends AngleState {
-  const AngleManual({required super.angle});
+  const AngleState({required this.angle, required this.isManual});
 
   @override
-  String toString() => 'AngleManual { angle: $angle }';
-}
+  List<Object?> get props => [angle, isManual];
 
-final class AngleSensor extends AngleState {
-  const AngleSensor({required super.angle});
-
-  @override
-  String toString() => 'AngleSensor { angle: $angle }';
+  AngleState copyWith({double? angle, bool? isManual}) {
+    return AngleState(angle: angle ?? this.angle, isManual: isManual ?? this.isManual);
+  }
 }
 
 class AngleCubit extends Cubit<AngleState> {
-  AngleCubit(this._angleSensorRepository) : super(const AngleManual(angle: 0));
+  AngleCubit() : super(const AngleState(angle: 0, isManual: true));
 
-  final AngleSensorRepository _angleSensorRepository;
   StreamSubscription<double>? _streamSubscription;
 
   void setAngle(double angle) {
-    emit(AngleManual(angle: angle.clamp(-math.pi, math.pi).toDouble()));
+    if (!state.isManual) return;
+
+    emit(state.copyWith(angle: angle.clamp(-math.pi, math.pi).toDouble()));
   }
 
-  Future<void> setIsSensor(bool isSensor) async {
-    emit(isSensor ? AngleSensor(angle: state.angle) : AngleManual(angle: state.angle));
+  Future<void> setIsManual(bool isManual) async {
+    emit(state.copyWith(isManual: isManual));
 
-    if (isSensor) {
-      await startListeningSensor();
+    if (isManual) {
+      await _closeStream();
     } else {
-      await stopListeningSensor();
+      await _openStream();
     }
   }
 
-  Future<void> startListeningSensor() async {
-    await _angleSensorRepository.start();
+  Future<void> _openStream() async {
+    _streamSubscription ??= UdpAngleSensorReader().listen((value) {
+      if (state.isManual) return;
 
-    _streamSubscription ??= _angleSensorRepository.stream.listen((value) {
-      if (state is! AngleSensor) return;
-
-      emit(AngleSensor(angle: value));
+      emit(state.copyWith(angle: value));
     });
   }
 
-  Future<void> stopListeningSensor() async {
+  Future<void> _closeStream() async {
     await _streamSubscription?.cancel();
     _streamSubscription = null;
-    await _angleSensorRepository.stop();
   }
 
   @override
   Future<void> close() async {
-    await stopListeningSensor();
+    await _closeStream();
 
     return super.close();
   }
